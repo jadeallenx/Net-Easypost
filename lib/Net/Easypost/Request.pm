@@ -26,19 +26,17 @@ sub send {
     my $self = shift;
     my $operation = shift;
     my $params = shift;
-    my $headers = shift;
 
     my $tx = $self->ua->post_form(
         $self->_build_url($operation), 
-        'UTF-8',
         $params, 
-        $headers,
     );
 
-    warn p $tx->res->json('error');
+    my $json = $tx->res->json;
 
-    croak $tx->res->json('error') if $tx->res->json('error');
-    return $tx->res->json;
+    croak "FATAL: " . $json->{error} if exists $json->{error};
+
+    return $json;
 }
 
 sub _build_url {

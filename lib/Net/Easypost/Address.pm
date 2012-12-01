@@ -3,11 +3,11 @@ package Net::Easypost::Address;
 use 5.014;
 use Moo;
 
-has 'address1' => (
+has 'street1' => (
     is => 'rw',
 );
 
-has 'address2' => (
+has 'street2' => (
     is => 'rw',
 );
 
@@ -30,12 +30,18 @@ has 'role' => (
     default => sub { 'address' }
 );
 
+has 'order' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { [qw(street1 street2 city state zip)] }
+);
+
 sub serialize {
     my $self = shift;
 
     # want a hash of e.g., address[address1] => foo from all defined attributes 
     my %h = map { $self->role . "[$_]" => $self->$_ } 
-        grep { defined $self->$_ } qw(address1 address2 city state zip);
+        grep { defined $self->$_ } @{$self->order};
 
     return \%h;
 }
@@ -44,8 +50,17 @@ sub clone {
     my $self = shift;
 
     return $self->new(
-        map { $_ => $self->$_ } grep { defined $self->$_ } qw(address1 address2 city state zip)
+        map { $_ => $self->$_ } grep { defined $self->$_ } @{$self->order}
     );
+}
+
+sub as_string {
+    my $self = shift;
+
+    join "\n", 
+        (map { $self->$_ } grep { defined $self->$_ } qw(street1 street2)),
+        join " ", map { $self->$_ } grep { defined $self->$_ } qw(city state zip)
+        ;
 }
 
 1;

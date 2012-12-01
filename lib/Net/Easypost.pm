@@ -3,6 +3,8 @@ package Net::Easypost;
 use 5.014;
 
 use Moo;
+use Hash::Merge::Simple qw(merge);
+
 use Net::Easypost::Address;
 use Net::Easypost::Parcel;
 use Net::Easypost::Carrier;
@@ -22,10 +24,36 @@ sub verify_address {
 
     my $address = Net::Easypost::Address->new( { @_ } );
 
-    p $self->send('/address/verify', $address->serialize);
+    return Net::Easypost::Address->new(
+        $self->send('/address/verify', $address->serialize)->{'address'}
+    );
 }
 
+sub get_rates {
+    my $self = shift;
+    my $params = { @_ };
 
+    my $to = Net::Easypost::Address->new( 
+        role => 'to', zip => delete $params->{to} 
+    );
+    
+    my $from = Net::Easypost::Address->new( 
+        role => 'from', zip => delete $params->{from} 
+    );
+
+    my $parcel = Net::Easypost::Parcel->new( $params );
+
+    my $rates = $self->send('/postage/rates', merge(
+        $to->serialize,
+        $from->serialize,
+        $parcel->serialize)
+    )->{'rates'};
+
+    my $hr;
+    map { $hr->{$_->{carrier}}->{$_->{service}} = $_->{rate} } @{ $rates };
+
+    return $hr;
+}
 
 
 
