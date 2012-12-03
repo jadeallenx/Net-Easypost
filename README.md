@@ -6,6 +6,138 @@ Net::Easypost - Perl client for the Easypost.co service
 
 version 0.01
 
+# SYNOPSIS
+
+    use 5.014;
+    use Net::Easypost;
+
+    my $ezp = Net::Easypost->new(
+          access_code => 'sekrit'
+    );
+
+    $addr = $ezp->verify_address(
+          street1 => '101 Spear St',
+          city => 'San Francisco',
+          zip => '94107'
+    );
+
+    my $to = $addr->clone;
+    $to->role('to');
+    $to->name('Mr Spacely');
+
+    my $from = Net::Easypost::Address->new(
+          role => 'from',
+          name => 'George Jetson',
+          street1 => '1060 W Addison',
+          city => 'Chicago',
+          state => 'IL',
+          phone => '3125559797',
+          zip => '60657'
+    );
+
+    my $parcel = Net::Easypost::Parcel->new(
+          length => 10.0, # dimensions in inches
+          width => 12.0,  
+          height => 5.0, 
+          weight => 13.0, # weight in ounces
+    );
+
+    my $service = Net::Easypost::Rate->new(
+          service => 'Priority',
+    );
+
+    my $label = $ezp->buy_label(
+          $to,
+          $from,
+          $parcel,
+          $service
+    );
+
+    printf("You paid $0.2f for your label to %s", $label->rate->rate, $to->as_string);
+    $label->save;
+    say ("Your postage label has been saved to ", $label->filename);
+
+# ATTRIBUTES
+
+## access\_code
+
+This is the Easypost API access code which the client will use to authenticate
+calls to various endpoints. This is a required attribute which must be supplied
+at object instantiation time.
+
+# METHODS
+
+## verify\_address
+
+This method attempts to validate an address. This call expects to take the same parameters as
+[Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address), namely, 
+
+- street1
+- street2
+- city
+- state
+- zip
+
+You may omit some of these attributes like city, state if you supply a zip, or zip if you
+supply a city, state. 
+
+This call returns a new [Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address) object.
+
+## get\_rate
+
+This method will get postage rates between two zip codes. It takes the following input parameters:
+
+- to (as a zipcode string)
+- from (as a zipcode string)
+- height (in inches as a float)
+- length (in inches as a float)
+- width (in inches as a float)
+- weight (in inches as a float)
+
+This call returns an array of [Net::Easypost::Rate](http://search.cpan.org/perldoc?Net::Easypost::Rate) objects in an arbitrary order.
+
+## buy\_label
+
+This method will attempt to purchase postage and generate a shipping label.
+
+It takes as input:
+
+- A [Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address) object in the "to" role,
+- A [Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address) object in the "from" role,
+- A [Net::Easypost::Parcel](http://search.cpan.org/perldoc?Net::Easypost::Parcel) object
+- A [Net::Easypost::Rate](http://search.cpan.org/perldoc?Net::Easypost::Rate) object
+
+It returns a [Net::Easypost::Label](http://search.cpan.org/perldoc?Net::Easypost::Label) object.
+
+## get\_label
+
+This method retrieves a label from a past purchase. It takes the label filename as its 
+only input parameter. It returns a [Net::Easypost::Label](http://search.cpan.org/perldoc?Net::Easypost::Label) object.
+
+## list\_labels
+
+This method returns an arrayref with all past purchased label filenames. It takes no
+input parameters.
+
+# PURPOSE
+
+This is a Perl client for the postage API at [Easypost](https://www.easypost.co). Consider this
+API at beta quality mostly because some of these library calls have an inconsistent input
+parameter interface which I'm not super happy about. Still, there's enough here to get 
+meaningful work done.
+
+Please note! __All API errors are fatal via croak__. If you need to catch errors more gracefully, I 
+recommend using [Try::Tiny](http://search.cpan.org/perldoc?Try::Tiny) in your implementation.
+
+# BUGS/SUPPORT
+
+Please report any bugs or feature requests to "bug-net-easypost at
+rt.cpan.org", or through the web interface at
+http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Net-Easypost
+<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Net-Easypost>.  I will
+be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.
+
 # AUTHOR
 
 Mark Allen <mrallen1@yahoo.com>
