@@ -23,6 +23,10 @@ has 'zip' => (
     is => 'rw',
 );
 
+has 'phone' => (
+    is => 'rw',
+);
+
 has 'role' => (
     is => 'ro',
     required => 1,
@@ -33,7 +37,7 @@ has 'role' => (
 has 'order' => (
     is => 'ro',
     lazy => 1,
-    default => sub { [qw(street1 street2 city state zip)] }
+    default => sub { [qw(street1 street2 city state zip phone)] }
 );
 
 sub serialize {

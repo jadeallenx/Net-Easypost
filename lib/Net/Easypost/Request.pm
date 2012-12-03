@@ -22,7 +22,7 @@ has endpoint => (
     default => sub { 'www.easypost.co/api' }
 );
 
-sub send {
+sub post {
     my $self = shift;
     my $operation = shift;
     my $params = shift;
@@ -44,6 +44,15 @@ sub _build_url {
     my $operation = shift;
 
     return "https://" . $self->access_code . ":@" . $self->endpoint . $operation;
+}
+
+sub get {
+    my $self = shift;
+    my $endpoint = shift;
+
+    my $tx = $self->ua->get($endpoint);
+
+    return $tx->res;
 }
 
 1;

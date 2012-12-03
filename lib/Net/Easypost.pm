@@ -7,7 +7,8 @@ use Hash::Merge::Simple qw(merge);
 
 use Net::Easypost::Address;
 use Net::Easypost::Parcel;
-use Net::Easypost::Carrier;
+use Net::Easypost::Rate;
+use Net::Easypost::Label;
 use Data::Printer;
 
 # ABSTRACT: Perl client for the Easypost.co service
@@ -25,7 +26,7 @@ sub verify_address {
     my $address = Net::Easypost::Address->new( { @_ } );
 
     return Net::Easypost::Address->new(
-        $self->send('/address/verify', $address->serialize)->{'address'}
+        $self->post('/address/verify', $address->serialize)->{'address'}
     );
 }
 
@@ -43,20 +44,55 @@ sub get_rates {
 
     my $parcel = Net::Easypost::Parcel->new( $params );
 
-    my $rates = $self->send('/postage/rates', merge(
+    my $rates = $self->post('/postage/rates', merge(
         $to->serialize,
         $from->serialize,
         $parcel->serialize)
     )->{'rates'};
 
-    my $hr;
-    map { $hr->{$_->{carrier}}->{$_->{service}} = $_->{rate} } @{ $rates };
+    return map { 
+        Net::Easypost::Rate->new(
+            carrier => $_->{carrier},
+            rate => $_->{rate},
+            service => $_->{service}
+        )                                   } @{ $rates };
 
-    return $hr;
 }
 
+sub buy_label {
+    my $self = shift;
 
+    my $resp = $self->post('/postage/buy', merge( map { $_->serialize } @_ ) );
 
+    return Net::Easypost::Label->new(
+        rate => $resp->{rate},
+        tracking_code => $resp->{tracking_code},
+        filename => $resp->{label_file_name},
+        filetype => $resp->{label_file_type},
+        url => $resp->{label_url}
+    );
+}
 
+sub get_label {
+    my $self = shift;
+
+    my $resp = $self->post('/postage/get', { label_file_name => $_[0] } );
+
+    return Net::Easypost::Label->new(
+        rate => $resp->{rate},
+        tracking_code => $resp->{tracking_code},
+        filename => $resp->{label_file_name},
+        filetype => $resp->{label_file_type},
+        url => $resp->{label_url}
+    );
+}
+
+sub list_labels {
+    my $self = shift;
+
+    my $resp = $self->get($self->_build_url('/postage/list'));
+
+    return $resp->json;
+}
 
 1;
