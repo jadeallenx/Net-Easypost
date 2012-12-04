@@ -9,37 +9,46 @@ if (!eval { require Socket; Socket::inet_aton('www.easypost.co') }) {
     plan skip_all => "Cannot connect to the API server";
 } 
 
-plan tests => 14;
+# 60 second connection timeout
+$ENV{MOJO_CONNECT_TIMEOUT} = 60;
+
+plan tests => 16;
 
 use Net::Easypost;
 
 my $ezpost = Net::Easypost->new( access_code => 'cueqNZUb3ldeWTNX7MU3Mel8UXtaAMUi' );
 isa_ok($ezpost, 'Net::Easypost', 'object created');
 
-my $addr = $ezpost->verify_address(
+my $addr = $ezpost->verify_address( {
         street1 => '388 Townsend St', 
         street2 => 'Apt 20', 
         city => 'San Francisco',
         zip => '94107',
-);
+        name => 'Zaphod'
+} );
 
 is($addr->state, 'CA', 'got right state');
+is($addr->name, 'Zaphod', 'name copied');
+like(sprintf($addr), qr/Zaphod\n/xms, 'address stringified');
+
+use Net::Easypost::Address;
+use Net::Easypost::Parcel;
 
 my @rates = $ezpost->get_rates(
-        to => '94107', 
-        from => '94019', 
-        length => 10.0, 
-        width => 5.0,
-        height => 8.0,
-        weight => 100.0
+          to => Net::Easypost::Address->new( role => 'to', zip => '94107'),
+        from => Net::Easypost::Address->new( role => 'from', zip => '94019'), 
+      parcel => Net::Easypost::Parcel->new ( 
+          length => 10.0, 
+          width => 5.0,
+          height => 8.0,
+          weight => 100.0
+      )
 );
 
 is(scalar @rates, 5, 'got 5 rates');
 isa_ok($rates[0], 'Net::Easypost::Rate', 'element correctly');
 is('USPS', $rates[0]->carrier, 'carrier is correct');
 
-use Net::Easypost::Address;
-use Net::Easypost::Parcel;
 use Net::Easypost::Rate;
 
 my $to = $addr->clone;

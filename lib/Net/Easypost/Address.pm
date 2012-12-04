@@ -3,6 +3,9 @@ package Net::Easypost::Address;
 use 5.014;
 use Moo;
 
+use overload 
+    '""' => \&as_string;
+
 # ABSTRACT: Class to represent an Easypost address 
 
 =attr street1
@@ -105,16 +108,18 @@ has 'order' => (
 
 =method serialize
 
-Format the defined attributes for a call to the Easypost service.
+Format the defined attributes for a call to the Easypost service. Takes an arrayref of attributes
+to serialize. Defaults to the C<order> attribute.
 
 =cut
 
 sub serialize {
     my $self = shift;
+    my $order = shift // $self->order;
 
     # want a hash of e.g., address[address1] => foo from all defined attributes 
     my %h = map { $self->role . "[$_]" => $self->$_ } 
-        grep { defined $self->$_ } @{$self->order};
+        grep { defined $self->$_ } @{$order};
 
     return \%h;
 }
@@ -135,7 +140,8 @@ sub clone {
 
 =method as_string
 
-Format this address as it might be seen on a mailing label
+Format this address as it might be seen on a mailing label. This class overloads 
+stringification using this method, so something like C<say $addr> should just work.
 
 =cut
 
@@ -146,6 +152,23 @@ sub as_string {
         (map { $self->$_ } grep { defined $self->$_ } qw(name phone street1 street2)),
         join " ", map { $self->$_ } grep { defined $self->$_ } qw(city state zip)
         ;
+}
+
+=method merge
+
+This method takes a L<Net::Easypost::Address> object and an arrayref of fields to copy
+into B<this> object. This method only merges fields that are defined on the other object.
+
+=cut
+
+sub merge {
+    my $self = shift;
+    my $old = shift;
+    my $fields = shift;
+
+    map { $self->$_($old->$_); } grep { defined $old->$_ } @{ $fields };
+
+    return $self;
 }
 
 1;
