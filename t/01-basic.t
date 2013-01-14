@@ -89,9 +89,9 @@ is(-e $label->filename, 1, 'image file exists');
 unlink $label->filename;
 
 my $labelnames = $ezpost->list_labels;
-is($labelnames->[0], 'test.png', 'got test.png');
+like($labelnames->[0], qr/\.png/, 'got png');
 my $label2 = $ezpost->get_label($labelnames->[0]);
-is($label2->filename, 'test.png', 'got test.png again!');
-is($label2->rate->rate, 11.11, 'got right rate');
-like($label2->tracking_code, qr/x+/, 'got correct test tracking code');
+like($label2->filename, qr/\.png/, 'got png again!');
+is($label2->rate->rate, '5.30', 'got right rate');
+like($label2->tracking_code, qr/[0-9]+/, 'got correct test tracking code');
 
