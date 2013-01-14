@@ -26,14 +26,14 @@ has ua => (
 
 =attr endpoint
 
-The Easypost service endpoint. Defaults to 'https://www.easypost.co/api'
+The Easypost service endpoint. Defaults to 'https://www.geteasypost.com/api'
 
 =cut
 
 has endpoint => (
     is => 'ro',
     lazy => 1,
-    default => sub { 'www.easypost.co/api' }
+    default => sub { 'www.geteasypost.com/api' }
 );
 
 =method post
