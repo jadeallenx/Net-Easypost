@@ -48,7 +48,7 @@ has 'weight' => (
 
 =attr predefined_package
 
-A carrier specific flat-rate package name. See L<https://www.easypost.co/api> for these.
+A carrier specific flat-rate package name. See L<https://www.geteasypost.com/api> for these.
 
 =cut
 

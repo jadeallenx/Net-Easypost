@@ -2,6 +2,11 @@ Change history for Net-Easypost
 
 {{$NEXT}}
 
+            Update URLs in POD
+
 0.02        2013-01-13
+            New endpoint
+            Updated test suite
 
 0.01        2012-12-04
+            Initial release

@@ -68,7 +68,7 @@ with('Net::Easypost::Request');
 
 =head1 OVERVIEW
 
-This is a Perl client for the postage API at L<Easypost|https://www.easypost.co>. Consider this
+This is a Perl client for the postage API at L<Easypost|https://www.geteasypost.com>. Consider this
 API at beta quality mostly because some of these library calls have an inconsistent input
 parameter interface which I'm not super happy about. Still, there's enough here to get 
 meaningful work done, and any future changes will be fairly cosmetic.
@@ -291,7 +291,7 @@ L<https://github.com/mrallen1/Net-Easypost/issues>
 
 =over
 
-=item * L<Easypost API docs|https://www.easypost.co/api>
+=item * L<Easypost API docs|https://www.geteasypost.com/api>
 
 =back
 
