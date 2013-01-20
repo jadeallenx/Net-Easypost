@@ -5,7 +5,6 @@ use 5.014;
 use Moo::Role;
 use Mojo::UserAgent;
 use Carp qw(croak);
-use Data::Printer;
 
 # ABSTRACT: Request role for Net::Easypost
 
@@ -54,11 +53,12 @@ sub post {
         $params, 
     );
 
-    my $json = $tx->res->json;
+    if ( ! $tx->success ) {
+        my ($err, $code) = $tx->error;
+        croak "FATAL: " . $self->endpoint . $operation . " returned $code: $err";
+    }
 
-    croak "FATAL: " . $json->{error} if exists $json->{error};
-
-    return $json;
+    return $tx->res->json;
 }
 
 sub _build_url {
