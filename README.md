@@ -4,7 +4,7 @@ Net::Easypost - Perl client for the Easypost.co service
 
 # VERSION
 
-version 0.02
+version 0.03
 
 # SYNOPSIS
 
@@ -59,7 +59,7 @@ version 0.02
 
 # OVERVIEW
 
-This is a Perl client for the postage API at [Easypost](https://www.easypost.co). Consider this
+This is a Perl client for the postage API at [Easypost](https://www.geteasypost.com). Consider this
 API at beta quality mostly because some of these library calls have an inconsistent input
 parameter interface which I'm not super happy about. Still, there's enough here to get 
 meaningful work done, and any future changes will be fairly cosmetic.
@@ -144,7 +144,7 @@ Or, if you wish, you may report bugs/features on Github's Issue Tracker.
 
 # SEE ALSO
 
-- [Easypost API docs](https://www.easypost.co/api)
+- [Easypost API docs](https://www.geteasypost.com/api)
 
 # AUTHOR
 

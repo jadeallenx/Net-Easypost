@@ -2,7 +2,12 @@ Change history for Net-Easypost
 
 {{$NEXT}}
 
+0.03        2013-01-19
+
             Update URLs in POD
+            Removed Data::Printer
+            Return actual endpoint error codes 
+            instead of inspecting JSON.
 
 0.02        2013-01-13
             New endpoint
