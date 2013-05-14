@@ -13,7 +13,7 @@ use Net::Easypost::Label;
 
 with('Net::Easypost::Request');
 
-# ABSTRACT: Perl client for the Easypost.co service
+# ABSTRACT: Perl client for the Easypost web service
 
 =head1 SYNOPSIS
 
