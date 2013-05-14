@@ -2,8 +2,12 @@ Change history for Net-Easypost
 
 {{$NEXT}}
 
-0.03        2013-01-19
+0.04        2013-05-13
+            Changed abstract
+            Fixed dependency (Thanks Graham Knop)
+            Fixed t/01-basic.t
 
+0.03        2013-01-19
             Update URLs in POD
             Removed Data::Printer
             Return actual endpoint error codes 
