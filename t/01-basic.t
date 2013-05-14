@@ -45,7 +45,7 @@ my @rates = $ezpost->get_rates(
       )
 );
 
-is(scalar @rates, 5, 'got 5 rates');
+is(scalar @rates, 20, 'got 20 rates');
 isa_ok($rates[0], 'Net::Easypost::Rate', 'element correctly');
 is('USPS', $rates[0]->carrier, 'carrier is correct');
 
@@ -92,6 +92,6 @@ my $labelnames = $ezpost->list_labels;
 like($labelnames->[0], qr/\.png/, 'got png');
 my $label2 = $ezpost->get_label($labelnames->[0]);
 like($label2->filename, qr/\.png/, 'got png again!');
-is($label2->rate->rate, '5.30', 'got right rate');
+is($label2->rate->rate, '5.05', 'got right rate');
 like($label2->tracking_code, qr/[0-9]+/, 'got correct test tracking code');
 
