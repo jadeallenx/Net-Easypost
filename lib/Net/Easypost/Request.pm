@@ -48,9 +48,9 @@ sub post {
     my $operation = shift;
     my $params = shift;
 
-    my $tx = $self->ua->post_form(
+    my $tx = $self->ua->post(
         $self->_build_url($operation), 
-        $params, 
+        form => $params, 
     );
 
     if ( ! $tx->success ) {
