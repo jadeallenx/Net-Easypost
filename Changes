@@ -2,6 +2,10 @@ Change history for Net-Easypost
 
 {{$NEXT}}
 
+0.06        2013-05-15
+            Make IO::Socket::SSL a prereq
+            Check rate against regex
+
 0.05        2013-05-14
             Fix post request method due to 
                 Mojo deprecation warnings
