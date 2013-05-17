@@ -47,7 +47,7 @@ my @rates = $ezpost->get_rates(
 
 is(scalar @rates, 20, 'got 20 rates');
 isa_ok($rates[0], 'Net::Easypost::Rate', 'element correctly');
-is('USPS', $rates[0]->carrier, 'carrier is correct');
+like($rates[0]->carrier, qr/USPS|UPS|FedEx/, 'carrier is correct');
 
 use Net::Easypost::Rate;
 
