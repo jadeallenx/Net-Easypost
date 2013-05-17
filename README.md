@@ -4,7 +4,7 @@ Net::Easypost - Perl client for the Easypost web service
 
 # VERSION
 
-version 0.06
+version 0.07
 
 # SYNOPSIS
 
