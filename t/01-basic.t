@@ -45,7 +45,7 @@ my @rates = $ezpost->get_rates(
       )
 );
 
-is(scalar @rates, 20, 'got 20 rates');
+cmp_ok(scalar @rates, '>', 4, 'got more than 4 rates');
 isa_ok($rates[0], 'Net::Easypost::Rate', 'element correctly');
 like($rates[0]->carrier, qr/USPS|UPS|FedEx/, 'carrier is correct');
 
