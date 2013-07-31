@@ -2,6 +2,13 @@ Change history for Net-Easypost
 
 {{$NEXT}}
 
+0.09        2013-07-31
+            Don't be so clever when passed a hashref in get_rates
+            (Fixes RT#87493)
+            Fix failing tests in t/01-basic.t
+            Add test for RT#87493
+            Add CPANfile to dist.ini
+
 0.08        2013-05-19
             Seriously. Fix rate number test.
 
