@@ -171,9 +171,13 @@ sub get_rates {
     my $self = shift;
 
     my $params;
-    if ( scalar @_ == 1 && ref( $params = shift ) ne 'HASH' ) {
-        # we did the assignment here ^^^^ so if this is *not* a hashref, croak 
-        croak 'get_rates expects a hashref not a '. ref($params) .'\n';
+    if ( scalar @_ == 1 ) {
+        if ( ref( $_[0] ) ne 'HASH' ) {
+            croak 'get_rates expects a hashref not a '. ref($params) .'\n';
+        }
+        else {
+            $params = shift;
+        }
     }
     else {
         $params = { @_ };
