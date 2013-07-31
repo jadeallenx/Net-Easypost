@@ -2,6 +2,7 @@
 
 use strict;
 use Test::More;
+use Data::Printer;
 
 use 5.014;
 
@@ -12,7 +13,7 @@ if (!eval { require Socket; Socket::inet_aton('www.easypost.co') }) {
 # 60 second connection timeout
 $ENV{MOJO_CONNECT_TIMEOUT} = 60;
 
-plan tests => 16;
+plan tests => 14;
 
 use Net::Easypost;
 
@@ -83,15 +84,9 @@ is($label->has_image, '', 'has no image');
 my $image_size = length $label->image;
 is($image_size > 1000, 1, 'image is 1k or more');
 is($label->has_image, 1, 'has image');
+like($label->filename, qr/\.png/, 'got png again!');
+like($label->tracking_code, qr/[0-9]+/, 'got correct test tracking code');
 $label->save;
 is(-e $label->filename, 1, 'image file exists');
 
 unlink $label->filename;
-
-my $labelnames = $ezpost->list_labels;
-like($labelnames->[0], qr/\.png/, 'got png');
-my $label2 = $ezpost->get_label($labelnames->[0]);
-like($label2->filename, qr/\.png/, 'got png again!');
-like($label2->rate->rate, qr/\d+\.\d+/, 'got right rate');
-like($label2->tracking_code, qr/[0-9]+/, 'got correct test tracking code');
-
