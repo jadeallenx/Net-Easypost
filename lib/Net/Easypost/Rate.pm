@@ -1,9 +1,8 @@
 package Net::Easypost::Rate;
 
-use 5.014;
 use Moo;
 
-# ABSTRACT: An object to represent an Easypost shipping rate
+with qw(Net::Easypost::Resource);
 
 =attr carrier
 
@@ -12,10 +11,10 @@ supported carrier.
 
 =cut
 
-has 'carrier' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub { 'USPS' }
+has carrier => (
+  is      => 'ro',
+  lazy    => 1,
+  default => sub { 'USPS' },
 );
 
 =attr service
@@ -25,8 +24,8 @@ The shipping service name. For example, for the USPS, these include 'Priority', 
 
 =cut
 
-has 'service' => (
-    is => 'ro',
+has service => (
+  is => 'ro',
 );
 
 =attr rate
@@ -35,25 +34,49 @@ The price in US dollars to ship using the associated carrier and service.
 
 =cut
 
-has 'rate' => (
-    is => 'ro',
+has rate => (
+  is => 'ro',
 );
+
+=attr shipment_id
+
+ID of the shipment that this Rate object relates to
+
+=cut
+
+has shipment_id => (
+  is => 'ro',
+);
+
+sub _build_fieldnames { [qw(carrier service rate shipment_id)] }
+sub _build_role { 'rate' }
 
 =method serialize
 
-Format this object into a form suitable to use with Easypost.
+serialized form of Rate objects
 
 =cut
 
 sub serialize {
-    my $self = shift;
+   my $self = shift;
 
-    my %h = map { $_ => $self->$_ } 
-        grep { defined $self->$_ } qw(carrier service rate);
-
-    return \%h;
+   return { 'rate[id]' => $self->id };
 }
 
+=method clone
+
+returns a new Rate object that is a deep-copy of this Rate object
+
+=cut
+
+sub clone {
+   my $self = shift;
+
+   return Net::Easypost::Rate->new(
+      map { $_ => $self->$_ }
+         grep { defined $self->$_ }
+            'id', @{ $self->fieldnames }
+   );
+}
 
 1;
-

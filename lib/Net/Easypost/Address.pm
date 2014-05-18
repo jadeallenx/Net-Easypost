@@ -1,12 +1,17 @@
 package Net::Easypost::Address;
 
-use 5.014;
+use Carp qw(croak);
 use Moo;
+use Scalar::Util;
+use overload
+   '""' => sub { $_[0]->as_string },
+   '0+' => sub { Scalar::Util::refaddr($_[0]) },
+   fallback => 1;
 
-use overload 
-    '""' => \&as_string;
+with qw(Net::Easypost::PostOnBuild);
+with qw(Net::Easypost::Resource);
 
-# ABSTRACT: Class to represent an Easypost address 
+# ABSTRACT: Class to represent an Easypost address
 
 =attr street1
 
@@ -14,7 +19,7 @@ A field for street information, typically a house number, a street name and a di
 
 =cut
 
-has 'street1' => (
+has street1 => (
     is => 'rw',
 );
 
@@ -24,7 +29,7 @@ A field for any additional street information like an apartment or suite number
 
 =cut
 
-has 'street2' => (
+has street2 => (
     is => 'rw',
 );
 
@@ -34,7 +39,7 @@ The city in the address
 
 =cut
 
-has 'city' => (
+has city => (
     is => 'rw',
 );
 
@@ -44,7 +49,7 @@ The U.S. state for this address
 
 =cut
 
-has 'state' => (
+has state => (
     is => 'rw',
 );
 
@@ -54,7 +59,7 @@ The U.S. zipcode for this address
 
 =cut
 
-has 'zip' => (
+has zip => (
     is => 'rw',
 );
 
@@ -65,7 +70,7 @@ require a sender phone number.
 
 =cut
 
-has 'phone' => (
+has phone => (
     is => 'rw',
 );
 
@@ -75,54 +80,33 @@ A name associated with this address.
 
 =cut
 
-has 'name' => (
+has name => (
     is => 'rw',
 );
 
-=attr role
+=method _build_fieldnames
 
-The role of this address. For example, if this is a recipient, it is in the 'to' role.
-If it's the sender's address, it's in the 'from' role. Defaults to 'address'.
-
-=cut
-
-has 'role' => (
-    is => 'rw',
-    required => 1,
-    lazy => 1,
-    default => sub { 'address' }
-);
-
-=attr order
-
-The order attributes should be processed during serialization or cloning. Defaults to
-name, street1, street2, city, state, zip, phone.
+Attributes that make up an Address, from L<Net::Easypost::Resource>
 
 =cut
 
-has 'order' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub { [qw(name street1 street2 city state zip phone)] }
-);
+sub _build_fieldnames { [qw(name street1 street2 city state zip phone)] }
 
-=method serialize
+=method _build_role
 
-Format the defined attributes for a call to the Easypost service. Takes an arrayref of attributes
-to serialize. Defaults to the C<order> attribute.
+Prefix to data when POSTing to the Easypost API about Address objects
 
 =cut
 
-sub serialize {
-    my $self = shift;
-    my $order = shift // $self->order;
+sub _build_role { 'address' }
 
-    # want a hash of e.g., address[address1] => foo from all defined attributes 
-    my %h = map { $self->role . "[$_]" => $self->$_ } 
-        grep { defined $self->$_ } @{$order};
+=method _build_operation
 
-    return \%h;
-}
+Base API endpoint for operations on Address objects
+
+=cut
+
+sub _build_operation { '/addresses' }
 
 =method clone
 
@@ -133,14 +117,16 @@ Make a new copy of this object and return it.
 sub clone {
     my $self = shift;
 
-    return $self->new(
-        map { $_ => $self->$_ } grep { defined $self->$_ } @{$self->order}, 'role'
+    return Net::Easypost::Address->new(
+        map { $_ => $self->$_ }
+            grep { defined $self->$_ }
+                @{ $self->fieldnames }
     );
 }
 
 =method as_string
 
-Format this address as it might be seen on a mailing label. This class overloads 
+Format this address as it might be seen on a mailing label. This class overloads
 stringification using this method, so something like C<say $addr> should just work.
 
 =cut
@@ -148,10 +134,12 @@ stringification using this method, so something like C<say $addr> should just wo
 sub as_string {
     my $self = shift;
 
-    join "\n", 
-        (map { $self->$_ } grep { defined $self->$_ } qw(name phone street1 street2)),
-        join " ", map { $self->$_ } grep { defined $self->$_ } qw(city state zip)
-        ;
+    join "\n",
+        (map  { $self->$_ }
+            grep { defined $self->$_ } qw(name phone street1 street2)),
+        join " ",
+            (map  { $self->$_ }
+                grep { defined $self->$_ } qw(city state zip));
 }
 
 =method merge
@@ -162,13 +150,38 @@ into B<this> object. This method only merges fields that are defined on the othe
 =cut
 
 sub merge {
-    my $self = shift;
-    my $old = shift;
-    my $fields = shift;
+    my ($self, $old, $fields) = @_;
 
-    map { $self->$_($old->$_); } grep { defined $old->$_ } @{ $fields };
+    map { $self->$_($old->$_) }
+        grep { defined $old->$_ }
+            @$fields;
 
     return $self;
+}
+
+=method verify
+
+This method takes a L<Net::Easypost::Address> object and verifies its underlying
+address
+
+=cut
+
+sub verify {
+    my $self = shift;
+    use Data::Dumper;
+
+    my $verify_response =
+       $self->requester->get( $self->operation . '/' . $self->id . '/verify' );
+
+    croak 'Unable to verify address, failed with message: '
+             . $verify_response->{error}
+       if $verify_response->{error};
+
+    my $new_address = Net::Easypost::Address->new(
+        $verify_response->json->{address}
+    );
+
+    return $new_address->merge($self, [qw(phone name)]);
 }
 
 1;

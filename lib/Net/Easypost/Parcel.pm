@@ -1,7 +1,9 @@
 package Net::Easypost::Parcel;
 
-use 5.014;
 use Moo;
+
+with qw(Net::Easypost::PostOnBuild);
+with qw(Net::Easypost::Resource);
 
 # ABSTRACT: An object to represent an Easypost parcel
 
@@ -11,8 +13,7 @@ The length of the parcel in inches.
 
 =cut
 
-has 'length' => (
-
+has length => (
     is => 'rw',
 );
 
@@ -22,7 +23,7 @@ The width of the parcel in inches.
 
 =cut
 
-has 'width' => (
+has width => (
     is => 'rw',
 );
 
@@ -30,9 +31,9 @@ has 'width' => (
 
 The height of the parcel in inches.
 
-=cut 
+=cut
 
-has 'height' => (
+has height => (
     is => 'rw',
 );
 
@@ -42,48 +43,57 @@ The weight of the parcel in ounces. (There are 16 ounces in a U.S. pound.)
 
 =cut
 
-has 'weight' => (
+has weight => (
     is => 'rw',
 );
 
 =attr predefined_package
 
-A carrier specific flat-rate package name. See L<https://www.geteasypost.com/api> for these.
+A carrier specific flat-rate package name. See L<https://www.easypost.com/docs/api/#predefined-packages> for these.
 
 =cut
 
-has 'predefined_package' => (
+has predefined_package => (
     is => 'rw',
 );
 
-=method serialize
+=method _build_fieldnames
 
-Format this object into a form suitable for use with the Easypost service.
+Attributes that make up an Parcel, from L<Net::Easypost::Resource>
 
 =cut
 
-sub serialize {
-    my $self = shift;
-    my $role = shift // 'parcel';
+sub _build_fieldnames { [qw(length width height weight predefined_package)] }
 
-    # want a hash of e.g., parcel[address1] => foo from all defined attributes 
-    my %h = map { $role . "[$_]" => $self->$_ } 
-        grep { defined $self->$_ } qw(length width height weight predefined_package);
+=method _build_role
 
-    return \%h;
-}
+Prefix to data when POSTing to the Easypost API about Parcel objects
+
+=cut
+
+sub _build_role { 'parcel' }
+
+=method _build_operation
+
+Base API endpoint for operations on Address objects
+
+=cut
+
+sub _build_operation { '/parcels' }
 
 =method clone
 
-Make a new copy of this object.
+returns a new Net::Easypost::Parcel object that is a deep-copy of this object
 
 =cut
 
 sub clone {
     my $self = shift;
 
-    return $self->new(
-        map { $_ => $self->$_ } grep { defined $self->$_ } qw(length width height weight predefined_package)    
+    return Net::Easypost::Parcel->new(
+        map { $_ => $self->$_ }
+            grep { defined $self->$_ }
+                'id', $self->fieldnames
     );
 }
 

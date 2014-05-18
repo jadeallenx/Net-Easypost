@@ -1,38 +1,39 @@
 package Net::Easypost::Request;
 
-use 5.014;
-
-use Moo::Role;
-use Mojo::UserAgent;
 use Carp qw(croak);
-
-# ABSTRACT: Request role for Net::Easypost
+use Data::Dumper;
+use Mojo::UserAgent;
+use Moo;
 
 =attr ua
 
-A user agent attribute. Defaults to L<Mojo::UserAgent>. 
+A user agent attribute. Defaults to L<Mojo::UserAgent>.
 
 =cut
 
-has ua => (
-    is => 'ro',
-    lazy => 1,
+has user_agent => (
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-        my $ua = Mojo::UserAgent->new();
-        $ua->name('Net::Easypost (Perl)/' . $Net::Easypost::VERSION);
+        my $user_agent = Mojo::UserAgent->new;
+        $user_agent->transactor->name(
+            'Net::Easypost (Perl)/' . $Net::Easypost::VERSION
+        );
+
+        return $user_agent;
     },
 );
 
 =attr endpoint
 
-The Easypost service endpoint. Defaults to 'https://www.geteasypost.com/api'
+The Easypost service endpoint. Defaults to 'https://api.easypost.com/v2'
 
 =cut
 
 has endpoint => (
-    is => 'ro',
-    lazy => 1,
-    default => sub { 'www.geteasypost.com/api' }
+    is      => 'ro',
+    lazy    => 1,
+    default => sub { 'api.easypost.com/v2' }
 );
 
 =method post
@@ -44,28 +45,34 @@ into Perl structures.
 =cut
 
 sub post {
-    my $self = shift;
-    my $operation = shift;
-    my $params = shift;
+    my ($self, $operation, $params) = @_;
 
-    my $tx = $self->ua->post(
-        $self->_build_url($operation), 
-        form => $params, 
+    my $tx = $self->user_agent->post(
+        $self->_build_url($operation),
+        form => $params,
     );
 
-    if ( ! $tx->success ) {
+    if ( !$tx->success ) {
         my ($err, $code) = $tx->error;
-        croak "FATAL: " . $self->endpoint . $operation . " returned $code: $err";
+        croak $code ? "FATAL: " . $self->endpoint . $operation . " returned $code: '$err'" :
+                      "FATAL: " . $self->endpoint . $operation . " returned '$err'";
     }
 
     return $tx->res->json;
 }
 
-sub _build_url {
-    my $self = shift;
-    my $operation = shift;
+=method _build_url
 
-    return "https://" . $self->access_code . ":@" . $self->endpoint . $operation;
+Given an operation, constructs a valid Easypost URL using the specified
+EASYPOST_API_KEY
+
+=cut
+
+sub _build_url {
+    my ($self, $operation) = @_;
+
+    # return 'https://' . $self->access_code . ':@' . $self->endpoint . $operation;
+    return 'https://' . $ENV{EASYPOST_API_KEY} . ':@' . $self->endpoint . $operation;
 }
 
 =method get
@@ -77,12 +84,14 @@ object.
 =cut
 
 sub get {
-    my $self = shift;
-    my $endpoint = shift;
+    my ($self, $endpoint) = @_;
 
-    my $tx = $self->ua->get($endpoint);
+    $endpoint = $self->_build_url($endpoint)
+        unless $endpoint =~ m/https?/;
 
-    return $tx->res;
+    return $self->user_agent->get(
+        $endpoint
+    )->res;
 }
 
 1;
