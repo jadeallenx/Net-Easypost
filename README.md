@@ -97,8 +97,8 @@ This method will attempt to purchase postage and generate a shipping label.
 
 It takes as input:
 
-- A [Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address) object in the "to" role,
-- A [Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address) object in the "from" role,
+- A [Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address) object,
+- A [Net::Easypost::Address](http://search.cpan.org/perldoc?Net::Easypost::Address) object,
 - A [Net::Easypost::Parcel](http://search.cpan.org/perldoc?Net::Easypost::Parcel) object
 - A [Net::Easypost::Rate](http://search.cpan.org/perldoc?Net::Easypost::Rate) object
 
