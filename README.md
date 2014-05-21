@@ -8,45 +8,45 @@ version 0.10
 
 # SYNOPSIS
 
-   use Net::Easypost;
+    use Net::Easypost;
 
-   my $to = Net::Easypost::Address->new(
-      name    => 'Johnathan Smith',
-      street1 => '710 East Water Street',
-      city    => 'Charlottesville',
-      state   => 'VA',
-      zip     => '22902',
-      phone   => '(434)555-5555',
-   );
+    my $to = Net::Easypost::Address->new(
+       name    => 'Johnathan Smith',
+       street1 => '710 East Water Street',
+       city    => 'Charlottesville',
+       state   => 'VA',
+       zip     => '22902',
+       phone   => '(434)555-5555',
+    );
 
-   my $from = Net::Easypost::Address->new(
-      name    => 'Jarrett Streebin',
-      phone   => '3237078576',
-      city    => 'Half Moon Bay',
-      street1 => '310 Granelli Ave',
-      state   => 'CA',
-      zip     => '94019',
-   );
+    my $from = Net::Easypost::Address->new(
+       name    => 'Jarrett Streebin',
+       phone   => '3237078576',
+       city    => 'Half Moon Bay',
+       street1 => '310 Granelli Ave',
+       state   => 'CA',
+       zip     => '94019',
+    );
 
-   my $parcel = Net::Easypost::Parcel->new(
-      length => 10.0,
-      width  => 5.0,
-      height => 8.0,
-      weight => 10.0,
-   );
+    my $parcel = Net::Easypost::Parcel->new(
+       length => 10.0,
+       width  => 5.0,
+       height => 8.0,
+       weight => 10.0,
+    );
 
-   my $shipment = Net::Easypost::Shipment->new(
-      to_address   => $to,
-      from_address => $from,
-      parcel       => $parcel,
-   );
+    my $shipment = Net::Easypost::Shipment->new(
+       to_address   => $to,
+       from_address => $from,
+       parcel       => $parcel,
+    );
 
-   my $ezpost = Net::Easypost->new;
-   my $label = $ezpost->buy_label($shipment, ('rate' => 'lowest'));
+    my $ezpost = Net::Easypost->new;
+    my $label = $ezpost->buy_label($shipment, ('rate' => 'lowest'));
 
-   printf("You paid \$%0.2f for your label to %s\n", $label->rate->rate, $to);
-   $label->save;
-   printf "Your postage label has been saved to '" . $label->filename . "'\n";
+    printf("You paid \$%0.2f for your label to %s\n", $label->rate->rate, $to);
+    $label->save;
+    printf "Your postage label has been saved to '" . $label->filename . "'\n";
 
 # OVERVIEW
 
