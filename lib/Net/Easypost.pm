@@ -1,4 +1,4 @@
-package Net::Easypost v0.0.10;
+package Net::Easypost v0.10;
 
 use Data::Dumper;
 use Carp qw(croak);
