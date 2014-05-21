@@ -60,14 +60,6 @@ At this time, Easypost only supports United States based addresses.
 Please note! __All API errors are fatal via croak__. If you need to catch errors more gracefully, I 
 recommend using [Try::Tiny](http://search.cpan.org/perldoc?Try::Tiny) in your implementation.
 
-# ATTRIBUTES
-
-## access\_code
-
-This is the Easypost API access code which the client will use to authenticate
-calls to various endpoints. This is a required attribute which must be supplied
-at object instantiation time.
-
 # METHODS
 
 ## verify\_address
