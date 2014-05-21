@@ -205,6 +205,7 @@ sub buy {
       tracking_code => $response->{tracking_code},
       url           => $label->{label_url},
       filetype      => $label->{label_file_type},
+      rate          => Net::Easypost::Rate->new($response->{selected_rate}),
       filename      => 'EASYPOST_LABEL_'
                         . $label->{id}
                         . '.'

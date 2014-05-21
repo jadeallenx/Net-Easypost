@@ -4,11 +4,10 @@ Net::Easypost - Perl client for the Easypost web service
 
 # VERSION
 
-version 0.09
+version 0.10
 
 # SYNOPSIS
 
-    use 5.014;
     use Net::Easypost;
 
     my $ezp = Net::Easypost->new(

@@ -71,8 +71,13 @@ EASYPOST_API_KEY
 sub _build_url {
     my ($self, $operation) = @_;
 
-    # return 'https://' . $self->access_code . ':@' . $self->endpoint . $operation;
-    return 'https://' . $ENV{EASYPOST_API_KEY} . ':@' . $self->endpoint . $operation;
+    if ( exists $ENV{EASYPOST_API_KEY} ) {
+        return 'https://' . $ENV{EASYPOST_API_KEY} . ':@' . $self->endpoint . $operation;
+    }
+    else {
+        croak 'Cannot find API key in access_code attribute of Net::Easypost' 
+            . ' or in an environment variable name EASYPOST_API_KEY';
+    }
 }
 
 =method get

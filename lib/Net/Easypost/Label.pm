@@ -55,9 +55,19 @@ This is a predicate which tells the caller if a URL is defined in the object.
 =cut
 
 has url => (
-    is        => 'ro',
-    predicate => 1,
-    required  => 1,
+   is        => 'ro',
+   predicate => 1,
+   required  => 1,
+);
+
+=attr rate
+
+The chosen rate for this Label
+
+=cut
+
+has rate => (
+   is  => 'ro',
 );
 
 

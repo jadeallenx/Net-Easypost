@@ -16,53 +16,45 @@ use Net::Easypost::Shipment;
 
 =head1 SYNOPSIS
 
-  use Net::Easypost;
+   use Net::Easypost;
 
-  my $ezp = Net::Easypost->new(
-        access_code => 'sekrit'
-  );
+   my $to = Net::Easypost::Address->new(
+      name    => 'Johnathan Smith',
+      street1 => '710 East Water Street',
+      city    => 'Charlottesville',
+      state   => 'VA',
+      zip     => '22902',
+      phone   => '(434)555-5555',
+   );
 
-  $addr = $ezp->verify_address( {
-        street1 => '101 Spear St',
-        city    => 'San Francisco',
-        zip     => '94107'
-  } );
+   my $from = Net::Easypost::Address->new(
+      name    => 'Jarrett Streebin',
+      phone   => '3237078576',
+      city    => 'Half Moon Bay',
+      street1 => '310 Granelli Ave',
+      state   => 'CA',
+      zip     => '94019',
+   );
 
-  my $to = $addr->clone;
-  $to->role('to');
-  $to->name('Mr Spacely');
+   my $parcel = Net::Easypost::Parcel->new(
+      length => 10.0,
+      width  => 5.0,
+      height => 8.0,
+      weight => 10.0,
+   );
 
-  my $from = Net::Easypost::Address->new(
-        role    => 'from',
-        name    => 'George Jetson',
-        street1 => '1060 W Addison',
-        city    => 'Chicago',
-        state   => 'IL',
-        phone   => '3125559797',
-        zip     => '60657'
-  );
+   my $shipment = Net::Easypost::Shipment->new(
+      to_address   => $to,
+      from_address => $from,
+      parcel       => $parcel,
+   );
 
-  my $parcel = Net::Easypost::Parcel->new(
-        length => 10.0, # dimensions in inches
-        width  => 12.0,
-        height => 5.0,
-        weight => 13.0, # weight in ounces
-  );
+   my $ezpost = Net::Easypost->new;
+   my $label = $ezpost->buy_label($shipment, ('rate' => 'lowest'));
 
-  my $service = Net::Easypost::Rate->new(
-        service => 'Priority',
-  );
-
-  my $label = $ezp->buy_label(
-        $to,
-        $from,
-        $parcel,
-        $service
-  );
-
-  printf("You paid $0.2f for your label to %s\n", $label->rate->rate, $to);
-  $label->save;
-  say ("Your postage label has been saved to ", $label->filename);
+   printf("You paid \$%0.2f for your label to %s\n", $label->rate->rate, $to);
+   $label->save;
+   printf "Your postage label has been saved to '" . $label->filename . "'\n";
 
 =head1 OVERVIEW
 
@@ -76,6 +68,11 @@ At this time, Easypost only supports United States based addresses.
 Please note! B<All API errors are fatal via croak>. If you need to catch errors more gracefully, I
 recommend using L<Try::Tiny> in your implementation.
 
+API key:
+
+You must have your API key stored in an environment variable named 
+EASYPOST_API_KEY (recommended)
+
 =cut
 
 =attr access_code
@@ -87,8 +84,7 @@ at object instantiation time.
 =cut
 
 has 'access_code' => (
-    is       => 'ro',
-    required => 1,
+    is => 'ro',
 );
 
 =attr requestor
