@@ -2,6 +2,8 @@ Change history for Net-Easypost
 
 {{$NEXT}}
 
+0.11        2014-05-21
+
 0.09        2013-07-31
             Don't be so clever when passed a hashref in get_rates
             (Fixes RT#87493)
