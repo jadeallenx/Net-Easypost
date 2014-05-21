@@ -75,18 +75,6 @@ EASYPOST_API_KEY (recommended)
 
 =cut
 
-=attr access_code
-
-This is the Easypost API access code which the client will use to authenticate
-calls to various endpoints. This is a required attribute which must be supplied
-at object instantiation time.
-
-=cut
-
-has 'access_code' => (
-    is => 'ro',
-);
-
 =attr requestor
 
 HTTP client to POST and GET
