@@ -9,6 +9,8 @@ use Net::Easypost::Shipment;
 use Test::Exception;
 use Test::More tests => 3;
 
+$ENV{EASYPOST_API_KEY} = 'Ao0vbSp2P0cbEhQd8HjEZQ';
+
 if (!eval { require Socket; Socket::inet_aton('www.easypost.co') }) {
     plan skip_all => "Cannot connect to the API server";
 }
@@ -96,7 +98,7 @@ subtest 'LabelSave' => sub {
    my $label = $ezpost->buy_label($shipment, ('rate' => 'lowest'));
    lives_ok { 
       $label->save; 
-   }, 'Saving a label lives ok';
+   } 'Saving a label lives ok';
 
    ok(-e $label->filename, 'Label image written correctly');
 

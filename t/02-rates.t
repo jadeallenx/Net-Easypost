@@ -18,7 +18,9 @@ use Net::Easypost;
 use Net::Easypost::Address;
 use Net::Easypost::Parcel;
 
-my $ezpost = Net::Easypost->new( access_code => 'cueqNZUb3ldeWTNX7MU3Mel8UXtaAMUi' );
+$ENV{EASYPOST_API_KEY} = 'Ao0vbSp2P0cbEhQd8HjEZQ';
+
+my $ezpost = Net::Easypost->new;
 
 my $addr = $ezpost->verify_address(
    {  street1 => '1776 Yorktown St',

@@ -8,6 +8,8 @@ use Net::Easypost::Address;
 use Test::Exception;
 use Test::More tests => 5;
 
+$ENV{EASYPOST_API_KEY} = 'Ao0vbSp2P0cbEhQd8HjEZQ';
+
 if (!eval { require Socket; Socket::inet_aton('www.easypost.co') }) {
     plan skip_all => "Cannot connect to the API server";
 }
