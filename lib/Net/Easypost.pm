@@ -256,7 +256,7 @@ L<https://github.com/mrallen1/Net-Easypost/issues>
 
 =over
 
-=item * L<Easypost API docs|https://www.geteasypost.com/api>
+=item * L<Easypost API docs|https://www.easypost.com/docs/api>
 
 =back
 
