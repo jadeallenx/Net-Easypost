@@ -25,6 +25,7 @@ use Net::Easypost::Shipment;
       state   => 'VA',
       zip     => '22902',
       phone   => '(434)555-5555',
+      country => 'US',
    );
 
    my $from = Net::Easypost::Address->new(
@@ -34,6 +35,7 @@ use Net::Easypost::Shipment;
       street1 => '310 Granelli Ave',
       state   => 'CA',
       zip     => '94019',
+      country => 'US',
    );
 
    my $parcel = Net::Easypost::Parcel->new(
@@ -58,12 +60,10 @@ use Net::Easypost::Shipment;
 
 =head1 OVERVIEW
 
-This is a Perl client for the postage API at L<Easypost|https://www.geteasypost.com>. Consider this
+This is a Perl client for the postage API at L<Easypost|https://www.easypost.com/docs/api>. Consider this
 API at beta quality mostly because some of these library calls have an inconsistent input
 parameter interface which I'm not super happy about. Still, there's enough here to get
 meaningful work done, and any future changes will be fairly cosmetic.
-
-At this time, Easypost only supports United States based addresses.
 
 Please note! B<All API errors are fatal via croak>. If you need to catch errors more gracefully, I
 recommend using L<Try::Tiny> in your implementation.
@@ -104,16 +104,22 @@ This method attempts to validate an address. This call expects to take the same 
 
 =item * zip
 
+=item * country
+
 =back
 
 You may omit some of these attributes like city, state if you supply a zip, or
 zip if you supply a city, state.
 
-
 This call returns a new L<Net::Easypost::Address> object.
 
 Along with the validated address, the C<phone> and C<name> fields will be
 copied from the input parameters, if they're set.
+
+The verification works only for addresses in US. If you pass a country
+other than US (the default), a warning will be issued, but the
+L<Net::Easypost::Address> object will be returned.
+
 
 =cut
 
@@ -250,7 +256,7 @@ L<https://github.com/mrallen1/Net-Easypost/issues>
 
 =over
 
-=item * L<Easypost API docs|https://www.geteasypost.com/api>
+=item * L<Easypost API docs|https://www.easypost.com/docs/api>
 
 =back
 

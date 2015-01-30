@@ -1,6 +1,6 @@
 package Net::Easypost::Address;
 
-use Carp qw(croak);
+use Carp qw(croak carp);
 use Moo;
 use Scalar::Util;
 use overload
@@ -84,13 +84,25 @@ has name => (
     is => 'rw',
 );
 
+=attr country
+
+The country code. Default to US.
+
+=cut
+
+has country => (
+                is => 'rw',
+                default => sub { 'US' },
+               );
+
+
 =method _build_fieldnames
 
 Attributes that make up an Address, from L<Net::Easypost::Resource>
 
 =cut
 
-sub _build_fieldnames { [qw(name street1 street2 city state zip phone)] }
+sub _build_fieldnames { [qw(name street1 street2 city state zip phone country)] }
 
 =method _build_role
 
@@ -162,14 +174,19 @@ sub merge {
 =method verify
 
 This method takes a L<Net::Easypost::Address> object and verifies its underlying
-address
+address.
+
+If a non-US address is asked for verification, a warning will be
+emitted and the object itself will be returned.
 
 =cut
 
 sub verify {
     my $self = shift;
-    use Data::Dumper;
-
+    if ($self->country ne 'US') {
+        carp "Verifying addresses outside US is not supported";
+        return $self;
+    }
     my $verify_response =
        $self->requester->get( $self->operation . '/' . $self->id . '/verify' );
 
