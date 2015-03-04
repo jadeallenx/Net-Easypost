@@ -4,7 +4,7 @@ Net::Easypost - Perl client for the Easypost web service
 
 # VERSION
 
-version 0.13
+version 0.14
 
 # SYNOPSIS
 
@@ -93,6 +93,10 @@ This call returns a new [Net::Easypost::Address](https://metacpan.org/pod/Net::E
 Along with the validated address, the `phone` and `name` fields will be
 copied from the input parameters, if they're set.
 
+The verification works only for addresses in US. If you pass a country
+other than US (the default), a warning will be issued, but the
+[Net::Easypost::Address](https://metacpan.org/pod/Net::Easypost::Address) object will be returned.
+
 ## get\_rates
 
 This method will get postage rates between two zip codes. It takes the following input parameters:
@@ -137,7 +141,7 @@ Or, if you wish, you may report bugs/features on Github's Issue Tracker.
 
 # SEE ALSO
 
-- [Easypost API docs](https://www.geteasypost.com/api)
+- [Easypost API docs](https://www.easypost.com/docs/api)
 
 # AUTHOR
 
