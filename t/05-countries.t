@@ -1,12 +1,14 @@
-#!perl
-use strict;
-use Test::More tests => 9;
-use Data::Dumper;
+#!/usr/bin/env perl
 
+use strict;
+use warnings; 
+
+use Data::Dumper;
 use Net::Easypost;
 use Net::Easypost::Address;
 use Net::Easypost::Parcel;
 use Net::Easypost::Rate;
+use Test::More tests => 9;
 
 $ENV{EASYPOST_API_KEY} = 'Ao0vbSp2P0cbEhQd8HjEZQ';
 
@@ -19,8 +21,8 @@ $ENV{MOJO_CONNECT_TIMEOUT} = 60;
 
 my $easypost = Net::Easypost->new( access_code => 'Ao0vbSp2P0cbEhQd8HjEZQ' );
 
-my @us_rates = get_rates(US => 22902 => 100);
-my @it_rates = get_rates(IT => 22902 => 100);
+my @us_rates = get_rates(US,22902,100);
+my @it_rates = get_rates(IT,22902,100);
 
 foreach my $rate (@us_rates) {
     diag "To US: " . describe_rate($rate);
