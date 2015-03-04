@@ -21,8 +21,8 @@ $ENV{MOJO_CONNECT_TIMEOUT} = 60;
 
 my $easypost = Net::Easypost->new( access_code => 'Ao0vbSp2P0cbEhQd8HjEZQ' );
 
-my @us_rates = get_rates(US,22902,100);
-my @it_rates = get_rates(IT,22902,100);
+my @us_rates = get_rates('US',22902,100);
+my @it_rates = get_rates('IT',22902,100);
 
 foreach my $rate (@us_rates) {
     diag "To US: " . describe_rate($rate);
