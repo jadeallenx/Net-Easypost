@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/mcmillhj/Net-Easypost.svg?branch=master)](https://travis-ci.org/mcmillhj/Net-Easypost)
+[![Coverage Status](https://coveralls.io/repos/mcmillhj/Net-Easypost/badge.svg?branch=master)](https://coveralls.io/r/mcmillhj/Net-Easypost?branch=master)
+
 # NAME
 
 Net::Easypost - Perl client for the Easypost web service
