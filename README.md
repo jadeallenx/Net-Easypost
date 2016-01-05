@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/mcmillhj/Net-Easypost.svg?branch=master)](https://travis-ci.org/mcmillhj/Net-Easypost)
-[![Coverage Status](https://coveralls.io/repos/mcmillhj/Net-Easypost/badge.svg?branch=master)](https://coveralls.io/r/mcmillhj/Net-Easypost?branch=master)
+[![Coverage Status](https://coveralls.io/repos/mcmillhj/Net-Easypost/badge.png?branch=master)](https://coveralls.io/r/mcmillhj/Net-Easypost?branch=master)
 [![Kwalitee status](http://cpants.cpanauthors.org/dist/Net-Easypost.png)](http://cpants.charsbar.org/dist/overview/Net-Easypost)
 
 # NAME
@@ -8,7 +8,7 @@ Net::Easypost - Perl client for the Easypost web service
 
 # VERSION
 
-version 0.16
+version 0.17
 
 # SYNOPSIS
 
@@ -149,7 +149,7 @@ Or, if you wish, you may report bugs/features on Github's Issue Tracker.
 
 # AUTHOR
 
-Mark Allen &lt;mrallen1@yahoo.com>, Hunter McMillen &lt;mcmillhj@gmail.com>
+Mark Allen <mrallen1@yahoo.com>, Hunter McMillen <mcmillhj@gmail.com>
 
 # COPYRIGHT AND LICENSE
 
