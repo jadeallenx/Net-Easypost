@@ -1,6 +1,8 @@
 Change history for Net-Easypost
 
 {{$NEXT}}
+
+0.17        2016-01-05
             - Remove Mojo::UserAgent in favor of HTTP::Tiny
             
 0.16        2015-12-29
