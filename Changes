@@ -1,7 +1,7 @@
 Change history for Net-Easypost
 
 {{$NEXT}}
-
+            - Add JSON as dependency in dist.ini
 0.17        2016-01-05
             - Remove Mojo::UserAgent in favor of HTTP::Tiny
             
