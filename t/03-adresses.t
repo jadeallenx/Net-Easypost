@@ -52,7 +52,7 @@ subtest 'AddressVerificationSuccess' => sub {
 
    my $address = Net::Easypost::Address->new(
       name    => 'John Smith',
-      street1 => '710 East Water Street',
+      street1 => '701 East Water Street',
       city    => 'Charlottesville',
       state   => 'VA',
    );
@@ -67,14 +67,14 @@ subtest 'AddressMerge' => sub {
 
    my $address1 = Net::Easypost::Address->new(
       name    => 'John Smith',
-      street1 => '710 East Water Street',
+      street1 => '701 East Water Street',
       city    => 'Charlottesville',
       state   => 'VA',
    );
 
    my $address2 = Net::Easypost::Address->new(
       name    => 'Johnathan Smith',
-      street1 => '710 E WATER ST',
+      street1 => '701 E WATER ST',
       city    => 'Charlottesville',
       state   => 'VA',
       zip     => '22902',
@@ -83,7 +83,7 @@ subtest 'AddressMerge' => sub {
 
    my $merged_address = Net::Easypost::Address->new(
       name    => 'Johnathan Smith',
-      street1 => '710 East Water Street',
+      street1 => '701 East Water Street',
       city    => 'Charlottesville',
       state   => 'VA',
       zip     => '22902',

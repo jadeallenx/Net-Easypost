@@ -66,14 +66,16 @@ sub verify {
         return $self;
     }
     my $verify_response =
-       $self->requester->get( $self->operation . '/' . $self->id . '/verify' );
+       $self->requester->get( 
+          join '/', $self->operation, $self->id, 'verify' 
+       );
 
     croak 'Unable to verify address, failed with message: '
         . $verify_response->{error}
     if $verify_response->{error};
 
     my $new_address = Net::Easypost::Address->new(
-        $verify_response->json->{address}
+        $verify_response->{address}
     );
 
     return $new_address->merge($self, [qw(phone name)]);

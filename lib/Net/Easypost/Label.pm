@@ -42,7 +42,7 @@ has 'image' => (
         croak "Cannot retrieve image for " . $self->filename . " without URL"
             unless $self->has_url;
 
-        return $self->requester->get($self->url)->content->asset->slurp;
+        return $self->requester->get($self->url);
     }
 );
 

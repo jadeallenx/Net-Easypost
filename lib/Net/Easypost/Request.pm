@@ -3,18 +3,12 @@ package Net::Easypost::Request;
 use Moo;
 
 use Carp qw(croak);
-use Mojo::UserAgent;
+use HTTP::Tiny;
+use JSON;
 
 has 'user_agent' => (
     is      => 'ro',
-    default => sub {
-        my $user_agent = Mojo::UserAgent->new;
-        $user_agent->transactor->name(
-            'Net::Easypost (Perl)/' . $Net::Easypost::VERSION
-        );
-
-        return $user_agent;
-    },
+    default => sub { HTTP::Tiny->new( agent => 'Net-Easypost ' ) },
 );
 
 has 'endpoint' => (
@@ -25,18 +19,18 @@ has 'endpoint' => (
 sub post {
     my ($self, $operation, $params) = @_;
 
-    my $tx = $self->user_agent->post(
-        $self->_build_url($operation),
-        form => $params,
+    my $http_response = $self->user_agent->post_form(
+       $self->_build_url($operation), $params,
     );
 
-    unless ( $tx->success ) {
-        my ($err, $code) = $tx->error;
-        croak $code ? "FATAL: " . $self->endpoint . $operation . " returned $code: '$err'" :
-                      "FATAL: " . $self->endpoint . $operation . " returned '$err'";
+    unless ( $http_response->{success} ) {
+        my ($err, $code) = map { $http_response->{$_} } qw(reason response);
+        croak $code 
+           ? "FATAL: " . $self->endpoint . $operation . " returned $code: '$err'" 
+           : "FATAL: " . $self->endpoint . $operation . " returned '$err'";
     }
 
-    return $tx->res->json;
+    return JSON::from_json $http_response->{content};
 }
 
 sub get {
@@ -45,9 +39,10 @@ sub get {
     $endpoint = $self->_build_url($endpoint)
         unless $endpoint =~ m/https?/;
 
-    return $self->user_agent->get(
-        $endpoint
-    )->res;
+    my $http_response = $self->user_agent->get( $endpoint );
+    return lc $http_response->{headers}->{'content-type'} =~ m|^\Qapplication/json\E|
+       ? JSON::from_json $http_response->{content}
+       : $http_response->{content};
 }
 
 sub _build_url {
