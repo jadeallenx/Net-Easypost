@@ -1,10 +1,14 @@
+[![Build Status](https://travis-ci.org/mcmillhj/Net-Easypost.svg?branch=master)](https://travis-ci.org/mcmillhj/Net-Easypost)
+[![Coverage Status](https://coveralls.io/repos/mcmillhj/Net-Easypost/badge.png?branch=master)](https://coveralls.io/r/mcmillhj/Net-Easypost?branch=master)
+[![Kwalitee status](http://cpants.cpanauthors.org/dist/Net-Easypost.png)](http://cpants.charsbar.org/dist/overview/Net-Easypost)
+
 # NAME
 
 Net::Easypost - Perl client for the Easypost web service
 
 # VERSION
 
-version 0.14
+version 0.18
 
 # SYNOPSIS
 
@@ -63,11 +67,11 @@ recommend using [Try::Tiny](https://metacpan.org/pod/Try::Tiny) in your implemen
 API key:
 
 You must have your API key stored in an environment variable named 
-EASYPOST\_API\_KEY (recommended)
+EASYPOST\_API\_KEY
 
 # ATTRIBUTES
 
-## requestor
+## requester
 
 HTTP client to POST and GET
 

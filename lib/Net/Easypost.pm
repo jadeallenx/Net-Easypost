@@ -71,17 +71,17 @@ recommend using L<Try::Tiny> in your implementation.
 API key:
 
 You must have your API key stored in an environment variable named 
-EASYPOST_API_KEY (recommended)
+EASYPOST_API_KEY
 
 =cut
 
-=attr requestor
+=attr requester
 
 HTTP client to POST and GET
 
 =cut
 
-has requestor => (
+has 'requester' => (
     is      => 'ro',
     lazy    => 1,
     default => sub { return Net::Easypost::Request->new }
@@ -156,7 +156,7 @@ This call returns an array of L<Net::Easypost::Rate> objects in an arbitrary ord
 =cut
 
 sub get_rates {
-    my $self = shift;
+    my $self = shift; # shift is important here
 
     my $params;
     if ( scalar @_ == 1 ) {
@@ -215,7 +215,10 @@ only input parameter. It returns a L<Net::Easypost::Label> object.
 sub get_label {
     my ($self, $label_filename) = @_;
 
-    my $resp = $self->requestor->post('/postage/get', { label_file_name => $label_filename } );
+    my $resp = $self->requester->post(
+        '/postage/get', 
+        { label_file_name => $label_filename } 
+    );
 
     return Net::Easypost::Label->new(
         rate          => Net::Easypost::Rate->new( $resp->{rate} ),
@@ -234,9 +237,11 @@ input parameters.
 =cut
 
 sub list_labels {
-    my $self = shift;
+    my ($self) = @_;
 
-    my $resp = $self->requestor->get( $self->requestor->_build_url('/postage/list') );
+    my $resp = $self->requester->get( 
+        $self->requester->_build_url('/postage/list') 
+    );
 
     return $resp->{postages};
 }

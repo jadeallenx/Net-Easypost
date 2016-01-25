@@ -1,117 +1,59 @@
 package Net::Easypost::Label;
 
-use Carp qw(croak);
-use IO::Handle;
 use Moo;
-use Net::Easypost::Request;
-
 with qw(Net::Easypost::Resource);
 
-=attr tracking_code
+use Carp qw(croak);
+use Net::Easypost::Request;
 
-The carrier generated tracking code for this label.
-
-=cut
-
-has tracking_code => (
+has 'tracking_code' => (
     is       => 'ro',
     required => 1
 );
 
-=attr filename
-
-The filename the Easypost API used to create the label file. (Also used
-for local storage.)
-
-=cut
-
-has filename => (
+has 'filename' => (
     is       => 'ro',
-    required => '1',
+    required => 1,
 );
 
-=attr filetype
-
-The file type for the image data. Defaults to 'image/png'
-
-=cut
-
-has filetype => (
+has 'filetype' => (
     is      => 'ro',
     lazy    => 1,
-    default => sub { 'image/png' }
+    default => 'image/png',
 );
 
-=attr url
-
-The URL from which to download the label image.
-
-=cut
-
-=method has_url
-
-This is a predicate which tells the caller if a URL is defined in the object.
-
-=cut
-
-has url => (
+has 'url' => (
    is        => 'ro',
    predicate => 1,
    required  => 1,
 );
 
-=attr rate
-
-The chosen rate for this Label
-
-=cut
-
-has rate => (
+has 'rate' => (
    is  => 'ro',
 );
 
-
-=attr image
-
-This is the label image data.  It lazily downloads this information if a
-URL is defined. It currently uses a L<Net::Easypost::Request> role to
-get the data from the Easypost service.
-
-=cut
-
-=method has_image
-
-Tells the caller if an image has been downloaded.
-
-=cut
-
-has image => (
+has 'image' => (
     is        => 'ro',
     lazy      => 1,
     predicate => 1,
     default   => sub {
-        my $self = shift;
+        my ($self) = @_;
 
-        croak "can't retrieve image for " . $self->filename . " without a url"
+        croak "Cannot retrieve image for " . $self->filename . " without URL"
             unless $self->has_url;
 
-        return $self->requester->get($self->url)->content->asset->slurp;
+        return $self->requester->get($self->url);
     }
 );
 
+sub _build_operation { '' }
 sub _build_role { 'label' }
-sub _build_fieldnames { [qw(tracking_code url filetype filename)] }
-
-
-=method save
-
-Store the label image locally using the filename in the object. This will typically be
-in the current working directory of the caller.
-
-=cut
+sub _build_fieldnames { 
+    return [qw/tracking_code url filetype filename/];
+}
 
 sub save {
-    my $self = shift;
+    my ($self) = @_;
 
     $self->image
         unless $self->has_image;
@@ -120,14 +62,10 @@ sub save {
         or croak "Couldn't save " . $self->filename . ": $!";
 
     print {$fh} $self->image;
-    $fh->close;
+    close($fh);
+
+    return 1;
 }
-
-=method clone
-
-returns a new Net::Easypost::Label object that is a deep-copy of this object
-
-=cut
 
 sub clone {
    my $self = shift;
@@ -139,21 +77,88 @@ sub clone {
    );
 }
 
-=method serialize
-
-serialized form for Label objects
-
-=cut
-
 sub serialize {
-   my $self = shift;
+   my ($self) = @_;
 
-   # want a hashref of e.g., role[field1] => foo from all defined attributes
    return {
-      map { $self->role . "[$_]" => $self->$_ }
-         grep { defined $self->$_ }
-            @{ $self->fieldnames }
+      map  { $self->role . "[$_]" => $self->$_ }
+      grep { defined $self->$_ }
+         @{ $self->fieldnames }
    };
 }
 
 1;
+
+__END__ 
+
+=pod 
+
+=head1 NAME 
+
+Net::Easypost::Label
+
+=head1 SYNOPSIS
+
+Net::Easypost::Label->new
+
+=head1 ATTRIBUTES
+
+=over 4 
+
+=item tracking_code
+
+The carrier generated tracking code for this label.
+
+=item filename
+
+The filename the Easypost API used to create the label file. (Also used
+for local storage.)
+
+=item filetype
+
+The file type for the image data. Defaults to 'image/png'
+
+=item url
+
+The URL from which to download the label image.
+
+=item rate
+
+The chosen rate for this Label
+
+has rate => (
+   is  => 'ro',
+);
+
+=item image
+
+This is the label image data.  It lazily downloads this information if a
+URL is defined. It currently uses a L<Net::Easypost::Request> role to
+get the data from the Easypost service.
+
+=back
+
+=head1 METHODS
+
+=over 4 
+
+=item _build_fieldnames
+
+=item _build_role
+
+=item save
+
+Store the label image locally using the filename in the object. This will typically be
+in the current working directory of the caller.
+
+=item clone 
+
+returns a new Net::Easypost::Label object that is a deep-copy of this object
+
+=item serialize
+
+serialized format for Label objects
+
+=back
+
+=cut

@@ -18,7 +18,7 @@ if (!eval { require Socket; Socket::inet_aton('www.easypost.com') }) {
 # 60 second connection timeout
 $ENV{MOJO_CONNECT_TIMEOUT} = 60;
 
-my $ezpost = Net::Easypost->new( access_code => 'Ao0vbSp2P0cbEhQd8HjEZQ' );
+my $ezpost = Net::Easypost->new;
 isa_ok($ezpost, 'Net::Easypost', 'object created');
 
 my $addr = $ezpost->verify_address(
@@ -37,18 +37,17 @@ like(sprintf($addr), qr/Zaphod\n/xms, 'address stringified');
 my $rates = $ezpost->get_rates(
    to =>
       Net::Easypost::Address->new(
-         name    => 'Hunter McMillen',
-         street1 => '117 Walker Ln',
-         street2 => 'Apt 3',
+         name    => 'Hunter M',
+         street1 => '701 E Water St',
          city    => 'Charlottesville',
          zip     => '22902'
       ),
    from =>
       Net::Easypost::Address->new(
-         name    => 'Sydney Schmit',
-         street1 => '2356 Ilex Ct',
+         name    => 'Sydney S',
+         street1 => '117 Altamont Circle',
          city    => 'Charlottesville',
-         zip     => '22911'
+         zip     => '22902'
       ),
    parcel =>
       Net::Easypost::Parcel->new(
@@ -62,7 +61,6 @@ my $rates = $ezpost->get_rates(
 cmp_ok(scalar @$rates, '>=', 3, 'got more than 1 rates');
 isa_ok($rates->[0], 'Net::Easypost::Rate', 'element correctly');
 like($rates->[0]->carrier, qr/USPS|UPS|FedEx/, 'carrier is correct');
-
 
 $addr->name('Jon Calhoun');
 my $to = $addr->clone;
@@ -88,7 +86,7 @@ my $shipment = Net::Easypost::Shipment->new(
    from_address => $from,
    parcel       => $parcel,
 );
-my $label = $ezpost->buy_label($shipment, 'service_type' => 'Priority');
+my $label = $ezpost->buy_label($shipment, service_type => 'Priority');
 
 ok($label->has_url, 'has url!');
 ok( !$label->has_image, 'has no image');

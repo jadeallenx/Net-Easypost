@@ -1,65 +1,73 @@
 package Net::Easypost::Resource;
 
-use Carp qw(croak);
 use Moo::Role;
+
+use Carp qw(croak);
 use Net::Easypost::Request;
 
-# all Net::Easypost::Resource objects must implementat clone and serialize
+# all Net::Easypost::Resource objects must implement clone and serialize
 requires qw(serialize clone);
-
-=attr id
-
-A unique field that represent this Object to Easypost
-
-=cut
 
 has id => (
    is => 'rwp',
 );
 
-=attr endpoint
-
-base API operation endpoint for this Object
-
-=cut
-
-has operation => (
-   is      => 'ro',
-   lazy    => 1,
-   builder => 1,
-);
-
-=attr role
-
-Role of this object: address, shipment, parcel, etc...
-
-=cut
-
-has role => (
+has 'operation' => (
    is      => 'ro',
    builder => 1,
 );
 
-=attr fieldnames
-
-attributes of this Object in the Easypost API
-
-=cut
-
-has fieldnames => (
+has 'role' => (
    is      => 'ro',
    builder => 1,
 );
 
-=attr requester
+has 'fieldnames' => (
+   is      => 'ro',
+   builder => 1,
+);
 
-HTTP client to make GET & POST requests
-
-=cut
-
-has requester => (
+has 'requester' => (
    is      => 'ro',
    default => sub { Net::Easypost::Request->new },
 );
 
 1;
+
+__END__ 
+
+=pod 
+
+=head1 NAME 
+
+Net::Easypost::Resource
+
+=head1 SYNOPSIS
+
+=head1 ATTRIBUTES
+
+=over 4 
+
+=item id
+
+A unique field that represent this Object to Easypost
+
+=item endpoint
+
+base API operation endpoint for this Object
+
+=item role
+
+Role of this object: address, shipment, parcel, etc...
+
+=item fieldnames
+
+attributes of this Object in the Easypost API
+
+=item requester
+
+HTTP client to make GET & POST requests
+
+=back 
+
+=cut 
